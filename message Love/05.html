@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Love</title>
+   <style>
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, lightpink, lightblue);
+  overflow: hidden;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  background: url("https://via.placeholder.com") no-repeat center;
+  background-size: cover;
+}
+
+.container {
+  text-align: center;
+  position: relative;
+}
+
+.post {
+  width: 300px;
+  height: 200px;
+  background: pink;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 300ms ease-in;
+}
+
+.post:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: red;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -45%) scale(2);
+  }
+}
+
+.background-hearts {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.background-hearts div {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: red;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  animation: float 5s infinite;
+  opacity: 0.7;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  z-index: 10;
+}
+
+.popup h1 {
+  font-size: 2.5rem;
+  color: #ff3366;
+  text-shadow: 0 0 5px #ff6699, 0 0 10px #ff3366;
+}
+
+.popup p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 10px;
+}
+
+/* Background Video */
+.video-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  display: none;
+}
+   </style>
+  </head>
+  <body>
+    <!-- Background Video -->
+    <video class="video-bg" autoplay loop muted>
+      <source src="bg_video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="container">
+      <div class="post" id="post">
+        <div class="heart">❤️</div>
+      </div>
+      <div class="background-hearts" id="hearts"></div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <h1 id="popup-title">Happy New Year My Love</h1>
+      <p id="popup-text">
+        Wishing you a great, happy, and joyful day this year!
+      </p>
+    </div>
+
+    <script>
+      const post = document.getElementById("post");
+      const popup = document.getElementById("popup");
+      const overlay = document.getElementById("overlay");
+      const popupTitle = document.getElementById("popup-title");
+      const popupText = document.getElementById("popup-text");
+
+      const messages = [
+        {
+          title: "You Light Up My Life",
+          text: "You are the sunshine that brightens my every moment.",
+        },
+        {
+          title: "My Heart Beats for You",
+          text: "In the symphony of life, you are my favorite melody.",
+        },
+        {
+          title: "Forever Yours",
+          text: "Your love is my most cherished treasure.",
+        },
+        {
+          title: "You're My Universe",
+          text: "Every star in my sky shines for you.",
+        },
+        {
+          title: "Endless Love",
+          text: "With you, every moment feels like a beautiful dream.",
+        },
+      ];
+
+      post.addEventListener("click", () => {
+        const randomMessage =
+          messages[Math.floor(Math.random() * messages.length)];
+        popupTitle.textContent = randomMessage.title;
+        popupText.textContent = randomMessage.text;
+        popup.style.display = "block";
+        overlay.style.display = "block";
+      });
+
+      overlay.addEventListener("click", () => {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+      });
+
+      const hearts = document.getElementById("hearts");
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.style.left = Math.random() * 100 + "%";
+        heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+        heart.style.animationDelay = Math.random() * 2 + "s";
+        hearts.appendChild(heart);
+      }
+    </script>
+  </body>
+</html>

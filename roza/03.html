@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор Любви</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #content-box {
+            text-align: center;
+            background-color: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        #content-box:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e91e63;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e91e63;
+        }
+
+        button {
+            background: linear-gradient(to right, #e91e63, #ff4081);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            color: #e91e63;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            display: none;
+        }
+
+        .heart {
+            position: absolute;
+            width: 100px;
+            height: 90px;
+            top: 0;
+            left: 0;
+        }
+
+        .heart:before,
+        .heart:after {
+            position: absolute;
+            content: "";
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: #ff4081;
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .percentage {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .love-message {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff5f7;
+            border-radius: 10px;
+            border-left: 4px solid #e91e63;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            #content-box {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .percentage {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="content-box">
+        <h1>Калькулятор Любви</h1>
+        <p>Введите ваше имя и имя вашей пассии, чтобы узнать, насколько вы подходите друг другу!</p>
+        
+        <div class="input-group">
+            <label for="your-name">Ваше имя:</label>
+            <input type="text" id="your-name" name="your-name" placeholder="Введите ваше имя">
+        </div>
+        
+        <div class="input-group">
+            <label for="crush-name">Имя пассии:</label>
+            <input type="text" id="crush-name" name="crush-name" placeholder="Введите имя пассии">
+        </div>
+        
+        <button type="button" id="calculate">Рассчитать совместимость</button>
+        
+        <div class="heart-container" id="heart-container">
+            <div class="heart"></div>
+        </div>
+        
+        <div id="result">
+            <!-- Результат будет отображаться здесь -->
+        </div>
+        
+        <div class="love-message" id="love-message">
+            <!-- Сообщение о совместимости будет здесь -->
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            let button = document.querySelector("#calculate");
+            button.addEventListener("click", calculateLove);
+            
+            // Добавляем обработчик события нажатия клавиши Enter
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    calculateLove();
+                }
+            });
+        }
+
+        function calculateLove() {
+            let yourName = document.querySelector("#your-name").value.trim();
+            let crushName = document.querySelector("#crush-name").value.trim();
+            let resultDiv = document.querySelector("#result");
+            let heartContainer = document.querySelector("#heart-container");
+            let loveMessage = document.querySelector("#love-message");
+
+            // Скрываем предыдущие результаты
+            heartContainer.style.display = "none";
+            loveMessage.style.display = "none";
+
+            if (yourName !== "" && crushName !== "") {
+                // Анимация загрузки
+                resultDiv.innerHTML = "<p>Вычисляем совместимость...</p>";
+                
+                // Имитация вычислений с задержкой для эффекта
+                setTimeout(function() {
+                    let percentage = Math.floor(Math.random() * 101);
+                    
+                    // Отображаем сердце
+                    heartContainer.style.display = "block";
+                    
+                    // Отображаем результат
+                    resultDiv.innerHTML = `
+                        <div class="percentage">${percentage}%</div>
+                        <div class="message">${yourName} и ${crushName}</div>
+                    `;
+                    
+                    // Добавляем сообщение в зависимости от процента
+                    let message = "";
+                    if (percentage < 30) {
+                        message = "Возможно, стоит поискать другую пассию...";
+                    } else if (percentage < 50) {
+                        message = "Есть над чем поработать, но шансы есть!";
+                    } else if (percentage < 70) {
+                        message = "Хорошая совместимость! Есть потенциал для развития отношений.";
+                    } else if (percentage < 90) {
+                        message = "Отличная совместимость! Вы хорошо подходите друг другу.";
+                    } else {
+                        message = "Идеальная пара! Это настоящая любовь!";
+                    }
+                    
+                    loveMessage.innerHTML = message;
+                    loveMessage.style.display = "block";
+                    
+                    // Плавная прокрутка к результату
+                    resultDiv.scrollIntoView({ behavior: 'smooth' });
+                    
+                }, 1500);
+            } else {
+                resultDiv.innerHTML = "<p style='color: #e91e63;'>Пожалуйста, введите оба имени!</p>";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Effect</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .text-effect {
+            font-size: 2em;
+            color: #333;
+            opacity: 0;
+            animation: fadeIn 2s ease-in forwards;
+        }
+        .image-effect {
+            max-width: 300px;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 2s ease-in 1s forwards;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="text-effect">Ai là đom đóm giơ tay lên!</div>
+    <img class="image-effect" src="https://github.com/ProlayerVIP88/QR-CODE-EFFECT/blob/main/1234.jpg?text=Hình+Ảnh+Mẫu" alt="Hình ảnh mẫu">
+    <div id="qrcode"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        // URL của GitHub Pages (thay bằng URL của bạn sau khi kích hoạt GitHub Pages)
+        const url = "https://github.com/ProlayerVIP88/QR-CODE-EFFECT"; // Cập nhật URL thực tế
+
+        // Tạo mã QR
+        new QRCode(document.getElementById("qrcode"), {
+            text: url,
+            width: 128,
+            height: 128,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    </script>
+</body>
+</html>
