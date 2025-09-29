@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дуа за всех нуждающихся</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #1a1a2e, #16213e);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Стили для луны */
+    .moon {
+      position: fixed;
+      top: 10%;
+      right: 10%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #f5f5dc, #d4d4b4 60%, #a0a0a0);
+      border-radius: 50%;
+      box-shadow: 
+        0 0 60px 30px rgba(245, 245, 220, 0.3),
+        0 0 100px 60px rgba(245, 245, 220, 0.2),
+        0 0 140px 90px rgba(245, 245, 220, 0.1);
+      z-index: 0;
+      animation: moonGlow 4s ease-in-out infinite alternate;
+    }
+
+    .moon::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      width: 25px;
+      height: 25px;
+      background: rgba(200, 200, 180, 0.5);
+      border-radius: 50%;
+      box-shadow: 
+        30px 10px 0 -5px rgba(200, 200, 180, 0.4),
+        10px 40px 0 -3px rgba(200, 200, 180, 0.4),
+        40px 40px 0 -7px rgba(200, 200, 180, 0.3);
+    }
+
+    @keyframes moonGlow {
+      0% { box-shadow: 0 0 60px 30px rgba(245, 245, 220, 0.3); }
+      100% { box-shadow: 0 0 80px 40px rgba(245, 245, 220, 0.4); }
+    }
+
+    /* Стили для дождя */
+    .rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .drop {
+      position: absolute;
+      bottom: 100%;
+      width: 2px;
+      height: 30px;
+      background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.6));
+      animation: rain 1.5s linear infinite;
+    }
+
+    @keyframes rain {
+      0% { transform: translateY(0) rotate(10deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(10deg); opacity: 0; }
+    }
+
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      background: rgba(0,0,0,0.6);
+      padding: 50px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.8), 0 0 20px rgba(255, 204, 0, 0.3);
+      max-width: 650px;
+      width: 90%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 204, 0, 0.2);
+      animation: floatIn 1.5s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      color: #ffcc00;
+      animation: glowTitle 2s ease infinite;
+      text-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+      font-weight: bold;
+    }
+
+    @keyframes glowTitle {
+      0%, 100% { text-shadow: 0 0 20px rgba(255, 204, 0, 0.6); }
+      50% { text-shadow: 0 0 30px rgba(255, 204, 0, 1); }
+    }
+
+    .intro-text {
+      font-size: 1.3em;
+      line-height: 1.8;
+      animation: fadeIn 3s ease;
+      margin-bottom: 35px;
+      color: #e0e0e0;
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-dua {
+      background: linear-gradient(135deg, #ff5555, #ff7777);
+      color: #fff;
+      border: none;
+      padding: 18px 35px;
+      font-size: 1.2em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 5px 20px rgba(255, 85, 85, 0.4);
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-wealth {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-sad {
+      background: linear-gradient(135deg, #6a5acd, #9370db);
+      box-shadow: 0 5px 20px rgba(106, 90, 205, 0.4);
+    }
+
+    .btn-dua::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-dua:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-dua:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(255, 85, 85, 0.6);
+    }
+
+    .btn-wealth:hover {
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-sad:hover {
+      box-shadow: 0 8px 30px rgba(106, 90, 205, 0.6);
+    }
+
+    .btn-dua:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .dua-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+      backdrop-filter: blur(5px);
+      overflow-y: auto;
+      padding: 20px 0;
+    }
+
+    .dua-content {
+      background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+      padding: 50px 40px;
+      border-radius: 25px;
+      max-width: 750px;
+      width: 90%;
+      box-shadow: 0 0 60px rgba(255, 204, 0, 0.5), 0 10px 50px rgba(0,0,0,0.8);
+      border: 3px solid #ffcc00;
+      animation: slideIn 0.6s ease;
+      position: relative;
+      margin: auto;
+    }
+
+    .dua-content::before,
+    .dua-content::after {
+      content: '✨';
+      position: absolute;
+      font-size: 2em;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .dua-content::before {
+      top: 20px;
+      left: 20px;
+    }
+
+    .dua-content::after {
+      bottom: 20px;
+      right: 20px;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .dua-title {
+      font-size: 2.2em;
+      color: #ffcc00;
+      margin-bottom: 35px;
+      text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+      animation: pulse 2s ease infinite;
+      font-weight: bold;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    .dua-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(255, 204, 0, 0.05);
+      border-radius: 15px;
+      border-left: 4px solid #ffcc00;
+      text-align: left;
+    }
+
+    .dua-subtitle {
+      font-size: 1.3em;
+      color: #ffcc00;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .dua-text {
+      font-size: 1.4em;
+      line-height: 2;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .arabic-text {
+      font-size: 1.6em;
+      direction: rtl;
+      text-align: right;
+      color: #ffcc00;
+      margin-bottom: 15px;
+      line-height: 2.2;
+    }
+
+    .close-btn {
+      background: linear-gradient(135deg, #4CAF50, #5CBF60);
+      color: #fff;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.2em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .close-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(76, 175, 80, 0.6);
+    }
+
+    .close-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .counter {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #ffcc00;
+      animation: fadeIn 2s ease;
+    }
+
+    .music-note {
+      position: fixed;
+      font-size: 2em;
+      pointer-events: none;
+      animation: floatUp 4s ease-in-out;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .sound-control {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 204, 0, 0.5);
+      color: #ffcc00;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      transition: all 0.3s ease;
+      z-index: 3;
+    }
+
+    .sound-control:hover {
+      background: rgba(255, 204, 0, 0.2);
+      transform: scale(1.1);
+    }
+
+    /* Стили для раздела "Поделиться" */
+    .share-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 204, 0, 0.3);
+    }
+
+    .share-title {
+      color: #ffcc00;
+      font-size: 1.5em;
+      margin-bottom: 15px;
+    }
+
+    .share-text {
+      color: #e0e0e0;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+
+    .qrcode-container {
+      display: inline-block;
+      background: #fff;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, #4CAF50, #5CBF60);
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1em;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+      font-weight: bold;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px auto 0;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    .thanks-text {
+      color: #ffcc00;
+      font-size: 1.2em;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes slideIn {
+      from {opacity: 0; transform: translateY(-50px) scale(0.9);}
+      to {opacity: 1; transform: translateY(0) scale(1);}
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2em;
+      }
+
+      .intro-text {
+        font-size: 1.1em;
+      }
+
+      .btn-dua {
+        padding: 15px 25px;
+        font-size: 1em;
+      }
+
+      .dua-content {
+        padding: 40px 25px;
+      }
+
+      .dua-title {
+        font-size: 1.8em;
+      }
+
+      .dua-text {
+        font-size: 1.2em;
+      }
+
+      .arabic-text {
+        font-size: 1.4em;
+      }
+
+      .moon {
+        width: 80px;
+        height: 80px;
+        top: 5%;
+        right: 5%;
+      }
+
+      .share-title {
+        font-size: 1.3em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .container {
+        padding: 35px 20px;
+      }
+
+      .dua-title {
+        font-size: 1.5em;
+      }
+
+      .dua-text {
+        font-size: 1em;
+        line-height: 1.8;
+      }
+
+      .arabic-text {
+        font-size: 1.2em;
+      }
+
+      .btn-dua {
+        padding: 12px 20px;
+        font-size: 0.95em;
+      }
+
+      .close-btn {
+        padding: 12px 30px;
+        font-size: 1em;
+      }
+
+      .moon {
+        width: 60px;
+        height: 60px;
+      }
+
+      .buttons-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="moon"></div>
+
+<div class="stars" id="stars"></div>
+
+<div class="rain" id="rain"></div>
+
+<div class="container">
+  <div class="sound-control" id="soundControl">🔇</div>
+  
+  <h1>🤲 Молимся за всех 🤲</h1>
+  <p class="intro-text">
+    Выберите дуа для чтения. Пусть Аллах услышит наши молитвы и поможет всем нуждающимся.
+  </p>
+  
+  <div class="buttons-container">
+    <button class="btn-dua" onclick="showDua('general')">
+      <span style="position: relative; z-index: 1;">✨ Дуа за всех</span>
+    </button>
+    <button class="btn-dua btn-wealth" onclick="showDua('wealth')">
+      <span style="position: relative; z-index: 1;">💰 Дуа о богатстве</span>
+    </button>
+
+  </div>
+  
+  <div class="counter">Дуа прочитано: <span id="count">0</span> раз</div>
+  
+  <!-- Раздел "Поделиться с друзьями" -->
+  <div class="share-section">
+    <div class="share-title">Поделитесь с друзьями</div>
+    <p class="share-text">Отсканируйте QR-код или скопируйте ссылку, чтобы поделиться с друзьями</p>
+    
+    <div class="qrcode-container">
+      <div id="qrcode"></div>
+    </div>
+    
+    <button class="copy-btn" onclick="copyLink()">
+      <i class="fas fa-copy"></i> Скопировать ссылку
+    </button>
+    
+    <p class="thanks-text">Спасибо за вашу поддержку! ❤️</p>
+  </div>
+</div>
+
+<div class="dua-modal" id="duaModal">
+  <div class="dua-content" id="duaContent"></div>
+</div>
+
+<audio id="rainSound" loop>
+  <source src="./muzmo-ru-nashid-dolgaya-toska-muzmo-ru.mp3" type="audio/mp3">
+</audio>
+
+<script>
+  const modal = document.getElementById('duaModal');
+  const duaContent = document.getElementById('duaContent');
+  const countElement = document.getElementById('count');
+  const rainContainer = document.getElementById('rain');
+  const starsContainer = document.getElementById('stars');
+  const soundControl = document.getElementById('soundControl');
+  const rainSound = document.getElementById('rainSound');
+  
+  let count = 0;
+  let isSoundOn = false;
+
+  const duas = {
+    general: {
+      title: '🌟 Дуа за всех нуждающихся 🌟',
+      sections: [
+        {
+          text: 'О Аллах, сделай так, чтобы никто не оставался бедным, чтобы ни один ребёнок не остался сиротой, дай всем людям счастье, безопасность и достаток. Защити слабых, накорми голодных, приюти бездомных и исцели больных. Амиин.'
+        }
+      ]
+    },
+    wealth: {
+      title: '💰 Дуа о богатстве и достатке 💰',
+      sections: [
+        {
+          subtitle: 'Дуа от бедности',
+          arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ',
+          text: 'О Аллах! Я прибегаю к Твоей защите от неверия и бедности.'
+        },
+        {
+          subtitle: 'Дуа о достатке',
+          arabic: 'اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ',
+          text: 'О Аллах! Удовлетвори меня дозволенным от запретного и обогати меня Своей милостью так, чтобы я не нуждался ни в ком, кроме Тебя.'
+        },
+        {
+          subtitle: 'Дуа о благословении',
+          arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً',
+          text: 'Господь наш! Даруй нам добро в этом мире и добро в Вечном мире.'
+        }
+      ]
+    },
+   
+  };
+
+  // Создание звезд
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    starsContainer.appendChild(star);
+  }
+
+  // Создание дождя
+  function createRain() {
+    for (let i = 0; i < 100; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'drop';
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDelay = Math.random() * 5 + 's';
+      drop.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+      rainContainer.appendChild(drop);
+    }
+  }
+
+  // Создание QR-кода
+  function createQRCode() {
+    const qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href,
+      width: 150,
+      height: 150,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  createRain();
+  createQRCode();
+
+  function showDua(type) {
+    const dua = duas[type];
+    let content = `<div class="dua-title">${dua.title}</div>`;
+    
+    dua.sections.forEach(section => {
+      content += '<div class="dua-section">';
+      if (section.subtitle) {
+        content += `<div class="dua-subtitle">${section.subtitle}</div>`;
+      }
+      if (section.arabic) {
+        content += `<div class="arabic-text">${section.arabic}</div>`;
+      }
+      content += `<div class="dua-text">${section.text}</div>`;
+      content += '</div>';
+    });
+    
+    content += '<button class="close-btn" onclick="closeDua()">Амиин 🤲</button>';
+    
+    duaContent.innerHTML = content;
+    modal.style.display = 'flex';
+    count++;
+    countElement.textContent = count;
+    
+    createMusicNote();
+  }
+
+  function closeDua() {
+    modal.style.display = 'none';
+  }
+
+  function createMusicNote() {
+    const notes = ['🎵', '🎶', '✨', '💫', '⭐'];
+    const note = document.createElement('div');
+    note.className = 'music-note';
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.left = Math.random() * window.innerWidth + 'px';
+    note.style.top = window.innerHeight - 100 + 'px';
+    document.body.appendChild(note);
+    
+    setTimeout(() => note.remove(), 4000);
+  }
+
+  // Управление звуком
+  soundControl.addEventListener('click', function() {
+    if (isSoundOn) {
+      rainSound.pause();
+      soundControl.textContent = '🔇';
+    } else {
+      rainSound.play().catch(e => {
+        console.log('Автовоспроизведение заблокировано. Нажмите еще раз.');
+      });
+      soundControl.textContent = '🔊';
+    }
+    isSoundOn = !isSoundOn;
+  });
+
+  // Функция для копирования ссылки
+  function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        alert('Ссылка скопирована в буфер обмена!');
+      })
+      .catch(err => {
+        console.error('Ошибка при копировании: ', err);
+        // Fallback для старых браузеров
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Ссылка скопирована в буфер обмена!');
+      });
+  }
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeDua();
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      closeDua();
+    }
+  });
+</script>
+
+</body>
+</html>
